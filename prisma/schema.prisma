@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String          @id @default(uuid())
+  nama            String
+  email           String          @unique
+  passwordHash    String          @map("password_hash")
+  role            Role
+  isActive        Boolean         @default(true) @map("is_active")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  auditLogs       AuditLog[]
+  galleryItems    Gallery[]
+  programs        Program[]
+  inputRecords    SpeciesRecord[] @relation("InputBy")
+  verifiedRecords SpeciesRecord[] @relation("VerifiedBy")
+
+  @@map("users")
+}
+
+model Species {
+  id          String               @id @default(uuid())
+  namaLokal   String               @map("nama_lokal")
+  namaIlmiah  String               @map("nama_ilmiah")
+  jenis       JenisSpesies
+  createdAt   DateTime             @default(now()) @map("created_at")
+  programData ProgramSpeciesData[]
+  records     SpeciesRecord[]
+
+  @@map("species")
+}
+
+model MonitoringPeriod {
+  id          String               @id @default(uuid())
+  tahun       Int
+  semester    String
+  label       String?
+  programData ProgramSpeciesData[]
+  records     SpeciesRecord[]
+
+  @@unique([tahun, semester])
+  @@map("monitoring_periods")
+}
+
+model SpeciesRecord {
+  id             String             @id @default(uuid())
+  speciesId      String             @map("species_id")
+  periodId       String             @map("period_id")
+  jumlahIndividu Int                @map("jumlah_individu")
+  status         RecordStatus       @default(draft)
+  catatanRevisi  String?            @map("catatan_revisi")
+  inputBy        String             @map("input_by")
+  verifiedBy     String?            @map("verified_by")
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+  index          BiodiversityIndex?
+  inputter       User               @relation("InputBy", fields: [inputBy], references: [id])
+  period         MonitoringPeriod   @relation(fields: [periodId], references: [id])
+  species        Species            @relation(fields: [speciesId], references: [id])
+  verifier       User?              @relation("VerifiedBy", fields: [verifiedBy], references: [id])
+
+  @@map("species_records")
+}
+
+model BiodiversityIndex {
+  id              String        @id @default(uuid())
+  speciesRecordId String        @unique @map("species_record_id")
+  pi              Float
+  lnPi            Float         @map("ln_pi")
+  hValue          Float         @map("h_value")
+  calculatedAt    DateTime      @default(now()) @map("calculated_at")
+  record          SpeciesRecord @relation(fields: [speciesRecordId], references: [id])
+
+  @@map("biodiversity_index")
+}
+
+model Program {
+  id          String               @id @default(uuid())
+  nama        String
+  deskripsi   String
+  anggaran    Float
+  status      ProgramStatus        @default(draft)
+  createdBy   String               @map("created_by")
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+  photos      ProgramPhoto[]
+  speciesData ProgramSpeciesData[]
+  creator     User                 @relation(fields: [createdBy], references: [id])
+
+  @@map("programs")
+}
+
+model ProgramSpeciesData {
+  id             String           @id @default(uuid())
+  programId      String           @map("program_id")
+  speciesId      String           @map("species_id")
+  periodId       String           @map("period_id")
+  jumlahIndividu Int              @map("jumlah_individu")
+  period         MonitoringPeriod @relation(fields: [periodId], references: [id])
+  program        Program          @relation(fields: [programId], references: [id])
+  species        Species          @relation(fields: [speciesId], references: [id])
+
+  @@map("program_species_data")
+}
+
+model ProgramPhoto {
+  id        String  @id @default(uuid())
+  programId String  @map("program_id")
+  fileUrl   String  @map("file_url")
+  caption   String?
+  program   Program @relation(fields: [programId], references: [id])
+
+  @@map("program_photos")
+}
+
+model GalleryCategory {
+  id           String    @id @default(uuid())
+  namaKategori String    @map("nama_kategori")
+  items        Gallery[]
+
+  @@map("gallery_categories")
+}
+
+model Gallery {
+  id         String          @id @default(uuid())
+  judul      String
+  fileUrl    String          @map("file_url")
+  categoryId String          @map("category_id")
+  uploadedBy String          @map("uploaded_by")
+  createdAt  DateTime        @default(now()) @map("created_at")
+  category   GalleryCategory @relation(fields: [categoryId], references: [id])
+  uploader   User            @relation(fields: [uploadedBy], references: [id])
+
+  @@map("gallery")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  aksi         String
+  tabelTerkait String   @map("tabel_terkait")
+  dataSebelum  Json?    @map("data_sebelum")
+  dataSesudah  Json?    @map("data_sesudah")
+  createdAt    DateTime @default(now()) @map("created_at")
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+enum Role {
+  petugas_lapangan
+  admin
+  super_admin
+}
+
+enum JenisSpesies {
+  flora
+  fauna
+}
+
+enum RecordStatus {
+  draft
+  pending
+  published
+  rejected
+}
+
+enum ProgramStatus {
+  draft
+  published
+}
