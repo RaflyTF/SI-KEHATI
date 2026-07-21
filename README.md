@@ -1,85 +1,332 @@
-# SI-KEHATI — Sistem Informasi Keanekaragaman Hayati
+# 🌿 SI-KEHATI
+## Sistem Informasi Keanekaragaman Hayati
 
-Website monitoring dan publikasi data keanekaragaman hayati untuk
-**PT PLN Indonesia Power Unit Pembangkitan PLTD/G Tello**, dibangun mengikuti
-dokumen SRS & SDD yang telah disusun (Phase 1–4 dari proses SDLC proyek ini).
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge&logo=postgresql)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)
+![NextAuth](https://img.shields.io/badge/NextAuth-Authentication-purple?style=for-the-badge)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-38BDF8?style=for-the-badge&logo=tailwindcss)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-## Cakupan Implementasi (Sprint 1–6)
+---
 
-- ✅ Sprint 1 — Setup project & autentikasi berjenjang (Petugas Lapangan, Admin, Super Admin)
-- ✅ Sprint 2 — Input data monitoring + kalkulasi otomatis Indeks Shannon-Wiener (H')
-- ✅ Sprint 3 — Program konservasi + alur verifikasi/publikasi data
-- ✅ Sprint 4 — Galeri foto & kategori
-- ✅ Sprint 5 — Dashboard ringkasan & ekspor laporan (PDF/Excel)
-- ✅ Sprint 6 — Halaman publik, manajemen user, responsif & Dark Mode
+## 📖 About The Project
 
-Sprint 7 (Testing) dan Sprint 8 (Deployment) adalah proses, bukan kode, sehingga
-tidak termasuk dalam paket ini — silakan lanjutkan sesuai checklist pada SDD.
+SI-KEHATI (Sistem Informasi Keanekaragaman Hayati) merupakan aplikasi berbasis web yang dikembangkan untuk membantu proses monitoring, pengelolaan, verifikasi, serta pelaporan data keanekaragaman hayati.
 
-## Tech Stack
+Sistem ini menerapkan **Role Based Access Control (RBAC)** sehingga setiap pengguna hanya dapat mengakses fitur sesuai hak aksesnya.
 
-Next.js 14 (App Router) · TypeScript · Tailwind CSS · Prisma ORM · PostgreSQL ·
-NextAuth.js · Recharts · jsPDF · SheetJS (xlsx)
+Role yang tersedia:
 
-## Menjalankan di Localhost
+- 👑 Super Administrator
+- 🛡 Administrator
+- 🌱 Petugas Lapangan
 
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
+---
 
-2. **Siapkan database PostgreSQL**, lalu salin `.env.example` menjadi `.env` dan
-   isi `DATABASE_URL` sesuai koneksi database Anda:
-   ```bash
-   cp .env.example .env
-   ```
+# ✨ Main Features
 
-3. **Jalankan migrasi database**
-   ```bash
-   npx prisma migrate dev --name init
-   ```
+## 🔐 Authentication
 
-4. **Isi data awal (seed)** — akan membuat 3 akun demo dan data historis 2021–2025
-   sesuai referensi:
-   ```bash
-   npm run prisma:seed
-   ```
+- Login menggunakan NextAuth
+- Session Authentication
+- Protected Route
+- Role Based Access Control
+- Middleware Authorization
 
-5. **Jalankan aplikasi**
-   ```bash
-   npm run dev
-   ```
-   Buka [http://localhost:3000](http://localhost:3000)
+---
 
-## Akun Demo (setelah seed)
+## 📊 Dashboard
 
-| Role | Email | Password |
-|---|---|---|
-| Super Admin | superadmin@pltdgtello.id | password123 |
-| Admin | admin@pltdgtello.id | password123 |
-| Petugas Lapangan | petugas@pltdgtello.id | password123 |
+- Ringkasan Data Monitoring
+- Statistik Biodiversitas
+- Grafik Tren Monitoring
+- Ringkasan Program
+- Ringkasan Galeri
 
-> ⚠️ Ganti seluruh password default ini sebelum digunakan di luar lingkungan
-> pengembangan, dan jangan commit file `.env` yang berisi kredensial asli.
+---
 
-## Struktur Project
+## 🌱 Monitoring Biodiversitas
 
-Lihat penjelasan lengkap struktur folder pada dokumen **Software Design
-Document (SDD)** bagian "Struktur Folder". Ringkasnya:
+- Input Data Monitoring
+- Monitoring Flora
+- Monitoring Fauna
+- Status Draft
+- Status Pending
+- Status Published
+- Riwayat Monitoring
 
-- `src/app/(public)` — halaman publik (Beranda, Status Flora & Fauna, Program, Galeri, dll.)
-- `src/app/(auth)` — halaman login
-- `src/app/(dashboard)` — panel internal (butuh login, menu dinamis sesuai role)
-- `src/app/api` — REST API routes
-- `src/services` — logika bisnis (Service Layer)
-- `src/repositories` — akses data terpusat (Repository Pattern via Prisma)
-- `src/components` — komponen UI (dasar, layout, chart, form, fitur)
+---
 
-## Catatan Implementasi & Batasan (untuk pengembangan lanjutan)
+## ✅ Verifikasi Data
 
-- **Upload foto** pada modul Galeri & Program saat ini berupa input URL, belum
-  upload file fisik ke storage — sesuai catatan pada `GalleryUploadForm.tsx`.
-- **Multi-bahasa, notifikasi otomatis, dan laporan periodik terjadwal** belum
-  diimplementasikan, sesuai keputusan *Future Development* pada SRS.
-- Sebelum deployment ke produksi, ikuti checklist **Security Design** dan
-  **Deployment Architecture** pada SDD (SSL, domain, CI/CD, backup terjadwal).
+Administrator dapat:
+
+- Melihat data monitoring
+- Menyetujui data
+- Menolak data
+- Memberikan catatan revisi
+
+---
+
+## 🌳 Program Konservasi
+
+- Tambah Program
+- Edit Program
+- Hapus Program
+- Publish Program
+
+---
+
+## 🖼 Galeri
+
+- Upload Galeri
+- Kategori Galeri
+- Hapus Galeri
+
+---
+
+## 👤 Manajemen Pengguna
+
+- Tambah User
+- Nonaktifkan User
+- Role Management
+- Aktivasi User
+
+---
+
+# 🛠 Tech Stack
+
+| Frontend | Backend | Database |
+|-----------|----------|-----------|
+| Next.js 14 | Next.js API Routes | PostgreSQL |
+| React | Prisma ORM | |
+| TypeScript | NextAuth | |
+| Tailwind CSS | REST API | |
+
+---
+
+# 🏗 System Architecture
+
+```
+Browser
+    │
+    ▼
+Next.js App Router
+    │
+    ▼
+API Routes
+    │
+    ▼
+Prisma ORM
+    │
+    ▼
+PostgreSQL
+```
+
+---
+
+# 📂 Project Structure
+
+```
+SI-KEHATI
+│
+├── prisma
+│   ├── migrations
+│   ├── schema.prisma
+│   └── seed.ts
+│
+├── public
+│
+├── src
+│   ├── app
+│   ├── components
+│   ├── lib
+│   ├── services
+│   ├── middleware.ts
+│   └── types
+│
+├── package.json
+├── README.md
+└── .env.example
+```
+
+---
+
+# 🗄 Database
+
+Database menggunakan **PostgreSQL** dengan **Prisma ORM**.
+
+Entity utama:
+
+- Users
+- Species
+- Monitoring Periods
+- Species Records
+- Biodiversity Index
+- Programs
+- Gallery
+- Audit Logs
+
+---
+
+# 🚀 Installation
+
+Clone repository
+
+```bash
+git clone https://github.com/RaflyTF/SI-KEHATI.git
+```
+
+Masuk ke folder project
+
+```bash
+cd SI-KEHATI
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Generate Prisma Client
+
+```bash
+npx prisma generate
+```
+
+Migrasi Database
+
+```bash
+npx prisma migrate dev
+```
+
+Seed Database
+
+```bash
+npm run prisma:seed
+```
+
+Jalankan Development Server
+
+```bash
+npm run dev
+```
+
+Production Build
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+# ⚙ Environment Variables
+
+Buat file `.env`
+
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/si_kehati"
+
+NEXTAUTH_SECRET="your-secret-key"
+
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+---
+
+# 👤 Demo Account
+
+Password seluruh akun:
+
+```
+password123
+```
+
+| Role | Email |
+|------|-------|
+| Super Admin | superadmin@pltdgtello.id |
+| Admin | admin@pltdgtello.id |
+| Petugas Lapangan | petugas@pltdgtello.id |
+
+---
+
+# 🧪 Testing
+
+Seluruh fitur utama telah dilakukan pengujian.
+
+| Modul | Status |
+|--------|--------|
+| Authentication | ✅ |
+| Dashboard | ✅ |
+| CRUD Program | ✅ |
+| CRUD Gallery | ✅ |
+| CRUD User | ✅ |
+| Monitoring Data | ✅ |
+| Verification Workflow | ✅ |
+| REST API | ✅ |
+| Responsive Layout | ✅ |
+| Security Testing | ✅ |
+| Production Build | ✅ |
+
+---
+
+# 📱 Responsive Design
+
+Aplikasi telah diuji pada:
+
+- 💻 Desktop
+- 📱 Android
+- 📱 iPhone
+- 📱 Tablet
+
+---
+
+# 🔒 Security
+
+Implementasi keamanan meliputi:
+
+- NextAuth Authentication
+- Middleware Authorization
+- Role Based Access Control
+- Protected API Routes
+- Password Hashing
+- Session Management
+
+---
+
+# 📈 Future Improvements
+
+Beberapa pengembangan yang dapat dilakukan:
+
+- Export PDF Report
+- Export Excel
+- Email Notification
+- Push Notification
+- Image Compression
+- Activity Log Dashboard
+- Dashboard Analytics
+- Map Visualization
+- Biodiversity Prediction
+
+---
+
+# 📄 License
+
+Project ini menggunakan lisensi **MIT License**.
+
+---
+
+# 👨‍💻 Author
+
+**Rafly Taufika**
+
+GitHub:
+https://github.com/RaflyTF
+
+---
+
+⭐ Jika repository ini bermanfaat, jangan lupa memberikan **Star** pada repository ini.
