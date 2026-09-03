@@ -76,7 +76,8 @@ model BiodiversityIndex {
   lnPi            Float         @map("ln_pi")
   hValue          Float         @map("h_value")
   calculatedAt    DateTime      @default(now()) @map("calculated_at")
-  record          SpeciesRecord @relation(fields: [speciesRecordId], references: [id])
+
+  record          SpeciesRecord @relation(fields: [speciesRecordId], references: [id], onDelete: Cascade)
 
   @@map("biodiversity_index")
 }
@@ -104,7 +105,7 @@ model ProgramSpeciesData {
   periodId       String           @map("period_id")
   jumlahIndividu Int              @map("jumlah_individu")
   period         MonitoringPeriod @relation(fields: [periodId], references: [id])
-  program        Program          @relation(fields: [programId], references: [id])
+  program        Program          @relation(fields: [programId], references: [id], onDelete: Cascade)
   species        Species          @relation(fields: [speciesId], references: [id])
 
   @@map("program_species_data")
@@ -115,7 +116,7 @@ model ProgramPhoto {
   programId String  @map("program_id")
   fileUrl   String  @map("file_url")
   caption   String?
-  program   Program @relation(fields: [programId], references: [id])
+  program   Program @relation(fields: [programId], references: [id], onDelete: Cascade)
 
   @@map("program_photos")
 }

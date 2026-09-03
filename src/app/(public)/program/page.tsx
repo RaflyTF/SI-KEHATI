@@ -58,7 +58,7 @@ export default function ProgramListPage() {
           <Link
             key={p.id}
             href={`/program/${p.id}`}
-            className="block rounded-xl border border-gray-200 dark:border-gray-800 p-5 hover:border-primary transition-colors"
+            className="block rounded-xl border border-gray-200 dark:border-gray-800 p-5 transition-all duration-200 ease-out hover:border-primary hover:shadow-lg hover:-translate-y-1 active:scale-[0.98]"
           >
             <h2 className="font-medium mb-2">{p.nama}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-3">{p.deskripsi}</p>

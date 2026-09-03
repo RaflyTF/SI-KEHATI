@@ -55,9 +55,19 @@ export default function GaleriPublicPage() {
             </div>
           ))}
         {!loading && items.map((item) => (
-          <div key={item.id} className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.fileUrl} alt={item.judul} className="w-full h-40 object-cover" />
+          <div
+            key={item.id}
+            className="group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800"
+          >
+            <div className="overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.fileUrl}
+                alt={item.judul}
+                
+                className="w-full h-40 object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+              />
+            </div>
             <div className="p-3">
               <p className="text-sm font-medium">{item.judul}</p>
               <p className="text-xs text-gray-400">{item.category.namaKategori}</p>

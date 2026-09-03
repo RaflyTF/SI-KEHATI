@@ -20,3 +20,13 @@ export const ROLE_LABELS: Record<string, string> = {
   admin: 'Admin',
   super_admin: 'Super Admin',
 };
+
+// Label aksi audit log -- dipakai di tampilan "Riwayat Perubahan" (Data
+// Monitoring, Verifikasi, dan modul lain yang menampilkan audit trail).
+export const AUDIT_ACTION_LABELS: Record<string, string> = {
+  create: 'Dibuat',
+  update: 'Diperbarui',
+  delete: 'Dihapus',
+  publish: 'Disetujui & dipublikasikan',
+  reject: 'Ditolak',
+};

@@ -71,9 +71,12 @@ export default function StatusFloraFaunaPage() {
     <div className="max-w-6xl mx-auto px-4 py-12">
       <h1 className="text-2xl font-semibold mb-2 text-primary dark:text-primary-light">Data Status</h1>
       <p className="text-sm text-gray-600 dark:text-gray-300 max-w-3xl mb-8">
-        PT PLN Indonesia Power Unit Pembangkitan PLTD/G Tello melakukan monitoring flora dan fauna setiap 6 bulan
-        sekali untuk mengetahui pertumbuhan flora dan fauna di kawasan PLTD/G Tello.
+         PT PLN Indonesia Power Unit Pembangkitan PLTD/G Tello melakukan monitoring flora dan fauna yang berada di area PLTD/G Tello setiap 6 bulan sekali.
       </p>
+      <p className="text-sm text-gray-600 dark:text-gray-300 max-w-3xl mb-6">
+        Monitoring rutin ini dilakukan untuk mengetahui pertumbuhan flora dan fauna yang berada di area PLTD/G Tello. Berdasarkan hasil pemantauan rutin, jumlah flora dan fauna yang berada di area PLTD/G Tello mengalami peningkatan setiap tahunnya.
+      </p>
+
       {error && <p className="text-sm text-danger mb-6">{error}</p>}
 
       <div className="grid md:grid-cols-2 gap-6">
