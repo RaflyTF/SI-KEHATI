@@ -53,8 +53,20 @@ import { programUpdateSchema } from '@/lib/validators/program.validator';
 import { ZodError } from 'zod';
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as { role?: string } | undefined)?.role;
+
   const program = await getProgramById(params.id);
   if (!program) return NextResponse.json({ success: false, message: 'Program tidak ditemukan.' }, { status: 404 });
+
+  // Admin/Super Admin tetap bisa lihat program berstatus draft (dibutuhkan
+  // dashboard "Kelola Program"). Selain itu (publik, atau role lain),
+  // program draft dianggap "tidak ada" -- pesan yang sama seperti 404 asli,
+  // supaya tidak membocorkan informasi "program ini ada tapi masih draft".
+  if (program.status !== 'published' && role !== 'admin' && role !== 'super_admin') {
+    return NextResponse.json({ success: false, message: 'Program tidak ditemukan.' }, { status: 404 });
+  }
+
   return NextResponse.json({ success: true, data: program });
 }
 

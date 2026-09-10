@@ -108,6 +108,7 @@ model ProgramSpeciesData {
   program        Program          @relation(fields: [programId], references: [id], onDelete: Cascade)
   species        Species          @relation(fields: [speciesId], references: [id])
 
+  @@unique([programId, speciesId, periodId])
   @@map("program_species_data")
 }
 
