@@ -14,7 +14,8 @@ export default function BerandaPage() {
     <div className="w-full max-w-5xl px-6 text-center animasi-dari-dalam"> 
       
       <h1 className="text-4xl md:text-6xl font-bold mb-4"> 
-        Keanekaragaman Hayati 
+         
+         Keanekaragaman Hayati 
       </h1> 
  
       <p className="text-xl md:text-2xl italic mb-3"> 
