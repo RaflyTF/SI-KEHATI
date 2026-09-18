@@ -22,9 +22,13 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-gray-900/90 backdrop-blur">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
-        <Link href="/" className="font-semibold text-primary dark:text-primary-light">
-          SI-KEHATI
-        </Link>
+        <Link href="/" className="flex items-center">
+       <img
+         src="https://plnelectricrun.id/wp-content/uploads/2024/08/Logo-PLN-Indonesia-Power-Baru-01.png"
+        alt="Logo PLN Indonesia Power"
+        className="h-10 w-auto object-contain"
+        />
+      </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm">
           {NAV_ITEMS.map((item) => (
