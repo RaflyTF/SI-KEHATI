@@ -40,42 +40,103 @@ export default function GaleriPublicPage() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-2xl font-semibold mb-8 text-primary dark:text-primary-light">Galeri PLTD/G Tello</h1>
-      {error && <p className="text-sm text-danger mb-6">{error}</p>}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-        {loading &&
-          Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800">
-              <Skeleton className="w-full h-40 rounded-none" />
-              <div className="p-3 space-y-2">
-                <Skeleton className="h-4 w-2/3" />
-                <Skeleton className="h-3 w-1/3" />
-              </div>
-            </div>
-          ))}
-        {!loading && items.map((item) => (
-          <div
-            key={item.id}
-            className="group rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800"
-          >
-            <div className="overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={item.fileUrl}
-                alt={item.judul}
-                
-                className="w-full h-40 object-cover transition-transform duration-300 ease-out group-hover:scale-110"
-              />
-            </div>
-            <div className="p-3">
-              <p className="text-sm font-medium">{item.judul}</p>
-              <p className="text-xs text-gray-400">{item.category.namaKategori}</p>
-            </div>
+    <div className="mx-auto max-w-7xl px-6 py-12">
+
+  {/* Header */}
+  <div className="mb-10">
+    <p className="text-sm font-semibold tracking-wide text-green-700 dark:text-green-400">
+      GALERI
+    </p>
+
+    <div className="mt-2 h-1 w-10 rounded-full bg-green-700 dark:bg-green-400"></div>
+
+    <h1 className="mt-4 text-3xl font-bold text-green-800 dark:text-green-400 md:text-4xl">
+      Galeri PLTD/G Tello
+    </h1>
+
+    <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-600 dark:text-gray-300 md:text-base">
+      Dokumentasi kegiatan konservasi, lingkungan, dan keanekaragaman
+      hayati di kawasan PLTD/G Tello.
+    </p>
+  </div>
+
+  {/* Pesan Error */}
+  {error && (
+    <p className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-400">
+      {error}
+    </p>
+  )}
+
+  {/* Grid Galeri */}
+  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+    {/* Loading */}
+    {loading &&
+      Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900"
+        >
+          <Skeleton className="h-56 w-full rounded-none" />
+
+          <div className="space-y-3 p-5">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
           </div>
-        ))}
-        {!loading && items.length === 0 && <p className="text-gray-400 text-sm">Belum ada foto di galeri.</p>}
+        </div>
+      ))}
+
+    {/* Data Galeri */}
+    {!loading &&
+      items.map((item) => (
+        <div
+          key={item.id}
+          className="group overflow-hidden rounded-2xl border border-green-100 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-green-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+        >
+
+          {/* Foto */}
+          <div className="relative h-56 overflow-hidden bg-green-50 dark:bg-green-950/30">
+
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.fileUrl}
+              alt={item.judul}
+              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            />
+
+            {/* Overlay saat hover */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+
+          </div>
+
+          {/* Informasi */}
+          <div className="p-5">
+
+            {/* Garis aksen */}
+            <div className="mb-3 h-1 w-8 rounded-full bg-green-600"></div>
+
+            <p className="text-base font-semibold text-gray-900 dark:text-white">
+              {item.judul}
+            </p>
+
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {item.category.namaKategori}
+            </p>
+
+          </div>
+        </div>
+      ))}
+
+    {/* Data Kosong */}
+    {!loading && items.length === 0 && (
+      <div className="col-span-full rounded-2xl border border-dashed border-gray-300 px-6 py-12 text-center dark:border-gray-700">
+        <p className="text-sm text-gray-400">
+          Belum ada foto di galeri.
+        </p>
       </div>
-    </div>
+    )}
+
+  </div>
+</div>
   );
 }

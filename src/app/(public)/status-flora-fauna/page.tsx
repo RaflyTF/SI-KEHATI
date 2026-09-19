@@ -68,27 +68,82 @@ export default function StatusFloraFaunaPage() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-2xl font-semibold mb-2 text-primary dark:text-primary-light">Data Status</h1>
-      <p className="text-sm text-gray-600 dark:text-gray-300 max-w-3xl mb-8">
-         PT PLN Indonesia Power Unit Pembangkitan PLTD/G Tello melakukan monitoring flora dan fauna yang berada di area PLTD/G Tello setiap 6 bulan sekali.
-      </p>
-      <p className="text-sm text-gray-600 dark:text-gray-300 max-w-3xl mb-6">
-        Monitoring rutin ini dilakukan untuk mengetahui pertumbuhan flora dan fauna yang berada di area PLTD/G Tello. Berdasarkan hasil pemantauan rutin, jumlah flora dan fauna yang berada di area PLTD/G Tello mengalami peningkatan setiap tahunnya.
-      </p>
+  <div className="mx-auto max-w-6xl px-4 py-12">
+  <div className="mb-8">
+    <h1 className="text-2xl  text-primary dark:text-primary-light">
+      Data Status
+    </h1>
 
-      {error && <p className="text-sm text-danger mb-6">{error}</p>}
+    <div className="my-2 h-1 w-8 rounded-full bg-green-700"></div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-5">
-          <h2 className="text-sm font-medium mb-4">Trendline Status Flora dan Fauna</h2>
-          {loading ? <Skeleton className="h-[280px] w-full" /> : <TrendlineChart data={trend} />}
+        <h1 className="text-4xl font-bold text-green-800 dark:text-green-400">
+          Status Keaneragaman Hayati
+        </h1>
+  </div>
+
+  <p className="mb-2 max-w-4xl text-sm leading-7 text-gray-600 dark:text-gray-300">
+    PT PLN Indonesia Power Unit Pembangkitan PLTD/G Tello melakukan
+    monitoring flora dan fauna yang berada di area PLTD/G Tello setiap
+    6 bulan sekali.
+  </p>
+  <p className="mb-8 max-w-4xl text-sm leading-7 text-gray-600 dark:text-gray-300">
+    Monitoring rutin ini dilakukan untuk mengetahui pertumbuhan flora dan
+    fauna yang berada di area PLTD/G Tello. Berdasarkan hasil pemantauan
+    rutin, jumlah flora dan fauna yang berada di area PLTD/G Tello
+    mengalami peningkatan setiap tahunnya.
+  </p>
+
+  {error && (
+    <p className="mb-6 text-sm text-danger">
+      {error}
+    </p>
+  )}
+
+  <div className="grid gap-6 md:grid-cols-2">
+
+    {/* Grafik Flora dan Fauna */}
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 dark:bg-green-900/30">
+          📊
         </div>
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-5">
-          <h2 className="text-sm font-medium mb-4">Indeks Keanekaragaman Hayati</h2>
-          {loading ? <Skeleton className="h-[280px] w-full" /> : <BiodiversityIndexChart data={indexData} />}
-        </div>
+
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+          Trendline Status Flora dan Fauna
+        </h2>
       </div>
+
+      {loading ? (
+        <Skeleton className="h-[280px] w-full" />
+      ) : (
+        <TrendlineChart data={trend} />
+      )}
+
     </div>
+
+    {/* Grafik Keanekaragaman */}
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 dark:bg-green-900/30">
+          🌿
+        </div>
+
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+          Indeks Keanekaragaman Hayati
+        </h2>
+      </div>
+
+      {loading ? (
+        <Skeleton className="h-[280px] w-full" />
+      ) : (
+        <BiodiversityIndexChart data={indexData} />
+      )}
+
+    </div>
+  </div>
+
+</div>
   );
 }

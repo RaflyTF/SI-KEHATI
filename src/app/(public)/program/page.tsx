@@ -41,34 +41,104 @@ export default function ProgramListPage() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-2xl font-semibold mb-8 text-primary dark:text-primary-light">Program Konservasi</h1>
-      {error && <p className="text-sm text-danger mb-6">{error}</p>}
-      <div className="grid md:grid-cols-2 gap-6">
-        {loading &&
-          Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-gray-200 dark:border-gray-800 p-5 space-y-3">
-              <Skeleton className="h-5 w-3/4" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-2/3" />
-              <Skeleton className="h-4 w-24" />
-            </div>
-          ))}
-        {!loading && programs.map((p) => (
-          <Link
-            key={p.id}
-            href={`/program/${p.id}`}
-            className="block rounded-xl border border-gray-200 dark:border-gray-800 p-5 transition-all duration-200 ease-out hover:border-primary hover:shadow-lg hover:-translate-y-1 active:scale-[0.98]"
-          >
-            <h2 className="font-medium mb-2">{p.nama}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-3">{p.deskripsi}</p>
-            <p className="text-sm font-medium text-primary dark:text-primary-light">
-              Rp {p.anggaran.toLocaleString('id-ID')}
+    <div className="mx-auto max-w-7xl px-6 py-12">
+
+  {/* Header */}
+  <div className="mb-10">
+    <p className="text-2xl text-primary dark:text-primary-light">
+      PROGRAM
+    </p>
+
+    <div className="mt-2 h-1 w-10 rounded-full bg-primary"></div>
+
+    <h1 className="mt-4 text-3xl font-bold text-primary dark:text-primary-light">
+      Program Konservasi
+    </h1>
+
+    <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-600 dark:text-gray-300">
+      Berbagai program konservasi dan pemberdayaan yang dilakukan untuk
+      menjaga keanekaragaman hayati serta mendukung keberlanjutan lingkungan
+      di sekitar wilayah operasional.
+    </p>
+  </div>
+
+  {/* Pesan Error */}
+  {error && (
+    <p className="mb-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-danger dark:bg-red-950/30">
+      {error}
+    </p>
+  )}
+
+  {/* Daftar Program */}
+  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+
+    {/* Loading Skeleton */}
+    {loading &&
+      Array.from({ length: 4 }).map((_, i) => (
+        <div
+          key={i}
+          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+        >
+          <div className="mb-5 flex items-center justify-between">
+            <Skeleton className="h-4 w-8" />
+            <Skeleton className="h-2 w-2 rounded-full" />
+          </div>
+
+          <Skeleton className="h-5 w-3/4" />
+          <Skeleton className="mt-3 h-4 w-full" />
+          <Skeleton className="mt-2 h-4 w-5/6" />
+          <Skeleton className="mt-2 h-4 w-2/3" />
+
+          <div className="mt-5 border-t border-gray-100 pt-4 dark:border-gray-800">
+            <Skeleton className="h-4 w-28" />
+          </div>
+        </div>
+      ))}
+
+    {/* Data Program */}
+    {!loading &&
+      programs.map((p, index) => (
+        <Link
+          key={p.id}
+          href={`/program/${p.id}`}
+          className="group block rounded-2xl border border-green-100 bg-white p-6 shadow-sm transition duration-200 ease-out hover:-translate-y-1 hover:border-primary hover:shadow-md active:scale-[0.98] dark:border-gray-800 dark:bg-gray-900"
+        >
+          {/* Nomor Program */}
+          <div className="mb-5 flex items-center justify-between">
+            <span className="text-sm font-semibold text-primary dark:text-primary-light">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+
+            <span className="h-2 w-2 rounded-full bg-primary transition group-hover:scale-125"></span>
+          </div>
+
+          {/* Nama Program */}
+          <h2 className="text-lg font-semibold leading-7 text-gray-900 dark:text-white">
+            {p.nama}
+          </h2>
+
+          {/* Deskripsi */}
+          <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
+            {p.deskripsi}
+          </p>
+
+          {/* Anggaran */}
+          <div className="mt-5 border-t border-gray-100 pt-4 dark:border-gray-800">
+            <p className="text-sm font-semibold text-primary dark:text-primary-light">
+              Rp {p.anggaran.toLocaleString("id-ID")}
             </p>
-          </Link>
-        ))}
-        {!loading && programs.length === 0 && <p className="text-gray-400 text-sm">Belum ada program yang dipublikasikan.</p>}
-      </div>
-    </div>
+          </div>
+        </Link>
+      ))}
+
+    {/* Jika Data Kosong */}
+    {!loading && programs.length === 0 && (
+      <p className="col-span-full text-sm text-gray-400">
+        Belum ada program yang dipublikasikan.
+      </p>
+    )}
+
+  </div>
+</div>
   );
 }
