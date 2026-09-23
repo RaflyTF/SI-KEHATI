@@ -82,5 +82,7 @@ export default function LoginPage() {
         </form>
       </Card>
     </div>
+
+  
   );
 }

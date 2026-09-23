@@ -100,7 +100,6 @@ export default function BerandaPage() {
       {/* =====================================================
           HERO
       ===================================================== */}
-
       <section
         className="relative h-[900px] md:h-[700px] flex items-center justify-center bg-cover bg-center text-white"
         style={{
@@ -135,9 +134,9 @@ export default function BerandaPage() {
       </section>
 
 
-      {/* =====================================================
+  {/* =====================================================
     GAMBARAN UMUM
-===================================================== */}
+    ===================================================== */}
 
 <section className="grid md:grid-cols-2">
 
