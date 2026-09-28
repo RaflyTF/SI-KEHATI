@@ -354,7 +354,6 @@ export default function ProgramDetailPage() {
   }, [loadProgram, loadBiodiversity]);
 
   const mainPhoto = program?.photos[0];
-  const galleryPhotos = program?.photos.slice(1) ?? [];
 
   function openCell(species: BiodiversitySpeciesRow, period: BiodiversityPeriod) {
     const cell = species.byPeriod[period.id];
