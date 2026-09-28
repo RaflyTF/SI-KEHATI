@@ -343,7 +343,7 @@ export default function ProgramManagementPage() {
         setDetailTarget(null);
       });
   }
-
+    
   async function confirmDelete() {
     if (!deleteTarget) return;
     setDeleting(true);
@@ -365,19 +365,33 @@ export default function ProgramManagementPage() {
 
   function renderActions(p: ProgramRow, full?: boolean) {
     return (
-      <div className={`flex gap-2 ${full ? 'w-full' : ''}`}>
-        <Button variant="ghost" className={full ? 'flex-1' : ''} onClick={() => openDetail(p)}>
-          Detail
-        </Button>
-        <Button variant="secondary" className={full ? 'flex-1' : ''} onClick={() => setEditTarget(p)}>
-          Edit
-        </Button>
-        <Button variant="danger" className={full ? 'flex-1' : ''} onClick={() => setDeleteTarget(p)}>
-          Hapus
-        </Button>
-      </div>
-    );
-  }
+    <div className={`flex gap-2 ${full ? 'w-full' : ''}`}>
+      <Button
+        variant="ghost"
+        className={full ? 'flex-1' : ''}
+        onClick={() => openDetail(p)}
+      >
+        Detail
+      </Button>
+
+      <Button
+        variant="secondary"
+        className={full ? 'flex-1' : ''}
+        onClick={() => setEditTarget(p)}
+      >
+        Edit
+      </Button>
+
+      <Button
+        variant="danger"
+        className={full ? 'flex-1' : ''}
+        onClick={() => setDeleteTarget(p)}
+      >
+        Hapus
+      </Button>
+    </div>
+  );
+}
 
   return (
     <div className="space-y-4 md:space-y-6">

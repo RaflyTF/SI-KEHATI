@@ -250,6 +250,9 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { AddProgramSpeciesDataModal } from '@/components/features/AddProgramSpeciesDataModal';
 import { ProgramSpeciesDataCellModal } from '@/components/features/ProgramSpeciesDataCellModal';
 import { ProgramCalculationSection } from '@/components/features/ProgramCalculationSection';
@@ -302,6 +305,10 @@ export default function ProgramDetailPage() {
   const [biodiversityLoading, setBiodiversityLoading] = useState(true);
 
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [periodModalOpen, setPeriodModalOpen] = useState(false);
+  const [periodYear, setPeriodYear] = useState('');
+  const [periodSemester, setPeriodSemester] = useState('1');
+  const [periodSaving, setPeriodSaving] = useState(false);
   const [cellTarget, setCellTarget] = useState<{
     dataId: string;
     namaLokal: string;
@@ -346,6 +353,44 @@ export default function ProgramDetailPage() {
       .catch(() => {})
       .finally(() => setBiodiversityLoading(false));
   }, [params.id]);
+
+    const handleAddPeriod = async () => {
+  if (!periodYear) return;
+
+  setPeriodSaving(true);
+
+  try {
+    const res = await fetch('/api/monitoring-periods', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        tahun: Number(periodYear),
+        semester: periodSemester,
+        label: periodYear,
+      }),
+    });
+
+    const json = await res.json();
+
+    if (!res.ok || !json.success) {
+      alert(json.message ?? 'Gagal menambahkan periode.');
+      return;
+    }
+
+    setPeriodModalOpen(false);
+    setPeriodYear('');
+    setPeriodSemester('1');
+
+    // Muat ulang halaman agar periode baru muncul
+    window.location.reload();
+  } catch {
+    alert('Terjadi kesalahan saat menambahkan periode.');
+  } finally {
+    setPeriodSaving(false);
+  }
+};
 
   useEffect(() => {
     const cleanup = loadProgram();
@@ -553,53 +598,76 @@ export default function ProgramDetailPage() {
             </h2>
             <ProgramRecapSection biodiversity={biodiversity} />
           </section>
-
-          {/* GALERI PROGRAM */}
-          <section className="mb-12">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">Galeri Program</h2>
-            {galleryPhotos.length === 0 ? (
-              <EmptyState
-                title="Belum ada foto tambahan"
-                description="Foto dokumentasi lain untuk program ini akan tampil di sini."
-              />
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {galleryPhotos.map((photo) => (
-                  <figure key={photo.id} className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={photo.fileUrl}
-                      alt={photo.caption ?? program.nama}
-                      className="w-full aspect-[4/3] object-cover"
-                    />
-                    {photo.caption && (
-                      <figcaption className="text-xs text-gray-500 dark:text-gray-400 px-3 py-2">
-                        {photo.caption}
-                      </figcaption>
-                    )}
-                  </figure>
-                ))}
-              </div>
-            )}
-          </section>
-
+          
           {isAdmin && (
-            <>
-              <AddProgramSpeciesDataModal
-                open={addModalOpen}
-                onClose={() => setAddModalOpen(false)}
-                programId={params.id}
-                onSuccess={loadBiodiversity}
-              />
-              <ProgramSpeciesDataCellModal
-                open={!!cellTarget}
-                onClose={() => setCellTarget(null)}
-                target={cellTarget}
-                programId={params.id}
-                onSuccess={loadBiodiversity}
-              />
-            </>
-          )}
+  <>
+    {periodModalOpen && (
+      <Modal
+        open={periodModalOpen}
+        onClose={() => setPeriodModalOpen(false)}
+        title="Tambah Periode Monitoring"
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAddPeriod();
+          }}
+          className="space-y-4"
+        >
+          <Input
+            label="Tahun"
+            type="number"
+            min={2021}
+            value={periodYear}
+            onChange={(e) => setPeriodYear(e.target.value)}
+            placeholder="Contoh: 2026"
+            required
+          />
+
+          <Select
+            label="Semester"
+            value={periodSemester}
+            onChange={(e) => setPeriodSemester(e.target.value)}
+            required
+          >
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+          </Select>
+
+          <div className="flex gap-2">
+            <Button type="submit" disabled={periodSaving}>
+              {periodSaving ? 'Menyimpan...' : 'Simpan Periode'}
+            </Button>
+
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setPeriodModalOpen(false)}
+              disabled={periodSaving}
+            >
+              Batal
+            </Button>
+          </div>
+        </form>
+      </Modal>
+    )}
+
+    <AddProgramSpeciesDataModal
+      open={addModalOpen}
+      onClose={() => setAddModalOpen(false)}
+      programId={params.id}
+      onSuccess={loadBiodiversity}
+    />
+
+    <ProgramSpeciesDataCellModal
+      open={!!cellTarget}
+      onClose={() => setCellTarget(null)}
+      target={cellTarget}
+      programId={params.id}
+      onSuccess={loadBiodiversity}
+    />
+  </>
+)}
         </>
       ) : null}
     </div>

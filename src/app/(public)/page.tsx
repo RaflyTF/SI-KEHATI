@@ -210,36 +210,33 @@ export default function BerandaPage() {
 
   {/* Bagian kanan: Foto + latar hijau */}
 
-  <div className="relative overflow-hidden bg-[#165823] flex items-center justify-center px-8 py-12 md:px-10">
+<div className="relative overflow-hidden bg-[#165823] flex items-center justify-center px-8 py-12 md:px-10">
 
-    {/* Ornamen */}
+  {/* Ornamen */}
+  <div className="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-[#2B7438]/40"></div>
 
-    <div className="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-[#2B7438]/40"></div>
+  <div className="absolute -bottom-28 -right-20 h-72 w-72 rounded-full bg-[#0F471C]/50"></div>
 
-    <div className="absolute -bottom-28 -right-20 h-72 w-72 rounded-full bg-[#0F471C]/50"></div>
+  {/* Foto */}
+  <div className="relative z-10 w-full max-w-xl">
 
+    <div className="overflow-hidden rounded-2xl border-4 border-white/20 bg-[#D5E8C2] shadow-2xl">
 
-    {/* Foto */}
-
-    <div className="relative z-10 w-full max-w-xl">
-
-      <div className="overflow-hidden rounded-2xl border-4 border-white/20 bg-[#D5E8C2] shadow-2xl">
-
-        <img
-          src="/foto kawasan pltd.jpeg"
-          alt="Foto kawasan PLTD/G Tello"
-          className="h-64 w-full object-cover transition duration-500 hover:scale-105"
-        />
-
-      </div>
-
-      <p className="mt-4 text-center text-sm text-green-100/80">
-        Kawasan PLTD/G Tello
-      </p>
+      <img 
+        src="/foto kawasan pltd.jpeg" 
+        alt="Foto kawasan PLTD/G Tello" 
+        className="h-80 w-full object-cover transition duration-500 hover:scale-105" 
+      />
 
     </div>
 
+    <p className="mt-4 text-center text-sm text-green-100/80">
+      Kawasan PLTD/G Tello
+    </p>
+
   </div>
+
+</div>
 
 </section>
       {/* =====================================================

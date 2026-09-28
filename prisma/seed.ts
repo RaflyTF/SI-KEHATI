@@ -30,12 +30,13 @@ async function main() {
 
   // 2. Periode monitoring 2021 - 2025 (data hingga Juni 2025, sesuai referensi "*Data hingga bulan Juni")
   const periodDefs = [
-    { tahun: 2021, semester: '1', label: '2021' },
-    { tahun: 2022, semester: '1', label: '2022' },
-    { tahun: 2023, semester: '1', label: '2023' },
-    { tahun: 2024, semester: '1', label: '2024' },
-    { tahun: 2025, semester: '1', label: '2025*' },
-  ];
+  { tahun: 2021, semester: '1', label: '2021' },
+  { tahun: 2022, semester: '1', label: '2022' },
+  { tahun: 2023, semester: '1', label: '2023' },
+  { tahun: 2024, semester: '1', label: '2024' },
+  { tahun: 2025, semester: '1', label: '2025*' },
+  { tahun: 2026, semester: '1', label: '2026' },
+];
   const periods = new Map<number, string>();
   for (const p of periodDefs) {
     const period = await prisma.monitoringPeriod.upsert({
