@@ -223,7 +223,7 @@ export default function BerandaPage() {
     <div className="overflow-hidden rounded-2xl border-4 border-white/20 bg-[#D5E8C2] shadow-2xl">
 
       <img 
-        src="/foto kawasan pltd.jpeg" 
+        src="/kawasan.png" 
         alt="Foto kawasan PLTD/G Tello" 
         className="h-80 w-full object-cover transition duration-500 hover:scale-105" 
       />
