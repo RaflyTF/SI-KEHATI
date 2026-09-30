@@ -13,31 +13,39 @@ const NAV_ITEMS = [
   { href: '/kontak', label: 'Kontak' },
 ];
 
-// Navbar publik -- responsif (hamburger menu di layar mobile) dan mendukung
-// Dark Mode, sesuai kebutuhan NFR & Responsive Design pada SRS/SDD.
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const { theme, toggle } = useTheme();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-gray-900/90 backdrop-blur">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center">
-       <img
-         src="https://plnelectricrun.id/wp-content/uploads/2024/08/Logo-PLN-Indonesia-Power-Baru-01.png"
-        alt="Logo PLN Indonesia Power"
-        className="h-10 w-auto object-contain"
-        />
-      </Link>
+    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-900/90">
 
+      {/* Navbar utama */}
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
+
+        {/* Logo */}
+        <Link href="/" className="flex items-center">
+          <img
+            src="logo ubp tello.png"
+            alt="Logo PLN Indonesia Power"
+            className="h-14 w-auto object-contain"
+          />
+        </Link>
+
+        {/* Menu Desktop */}
         <nav className="hidden md:flex items-center gap-6 text-sm">
           {NAV_ITEMS.map((item) => (
-            <Link key={item.href} href={item.href} className="hover:text-primary dark:hover:text-primary-light">
+            <Link
+              key={item.href}
+              href={item.href}
+              className="hover:text-primary dark:hover:text-primary-light"
+            >
               {item.label}
             </Link>
           ))}
         </nav>
 
+        {/* Tombol Desktop */}
         <div className="hidden md:flex items-center gap-3">
           <button
             onClick={toggle}
@@ -46,31 +54,64 @@ export function Navbar() {
           >
             {theme === 'dark' ? '☀️ Terang' : '🌙 Gelap'}
           </button>
-          <Link href="/login" className="text-sm px-4 py-1.5 rounded-lg bg-primary text-white">
+
+          <Link
+            href="/login"
+            className="text-sm px-4 py-1.5 rounded-lg bg-primary text-white"
+          >
             Login
           </Link>
         </div>
 
-        <button className="md:hidden" onClick={() => setOpen((v) => !v)} aria-label="Buka menu">
-          ☰
+        {/* Tombol Hamburger Mobile */}
+        <button
+          className="md:hidden text-2xl px-2 py-1"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? 'Tutup menu' : 'Buka menu'}
+          aria-expanded={open}
+        >
+          {open ? '✕' : '☰'}
         </button>
+
       </div>
 
+      {/* Menu Mobile */}
       {open && (
-        <nav className="md:hidden flex flex-col gap-1 px-4 pb-4 text-sm">
-          {NAV_ITEMS.map((item) => (
-            <Link key={item.href} href={item.href} className="py-2" onClick={() => setOpen(false)}>
-              {item.label}
+        <nav className="md:hidden border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+          <div className="flex flex-col px-4 py-3">
+
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="py-3 text-sm border-b border-gray-100 dark:border-gray-800 hover:text-primary dark:hover:text-primary-light"
+              >
+                {item.label}
+              </Link>
+            ))}
+
+            {/* Mode */}
+            <button
+              onClick={toggle}
+              className="py-3 text-left text-sm border-b border-gray-100 dark:border-gray-800"
+            >
+              {theme === 'dark' ? '☀️ Mode Terang' : '🌙 Mode Gelap'}
+            </button>
+
+            {/* Login */}
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="mt-3 text-center py-2.5 rounded-lg bg-primary text-white text-sm font-medium"
+            >
+              Login
             </Link>
-          ))}
-          <button onClick={toggle} className="py-2 text-left">
-            {theme === 'dark' ? '☀️ Mode Terang' : '🌙 Mode Gelap'}
-          </button>
-          <Link href="/login" className="py-2 font-medium text-primary">
-            Login
-          </Link>
+
+          </div>
         </nav>
       )}
+
     </header>
   );
 }
