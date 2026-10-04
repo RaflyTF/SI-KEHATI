@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -26,13 +27,36 @@ model User {
 }
 
 model Species {
-  id          String               @id @default(uuid())
-  namaLokal   String               @map("nama_lokal")
-  namaIlmiah  String               @map("nama_ilmiah")
-  jenis       JenisSpesies
-  createdAt   DateTime             @default(now()) @map("created_at")
-  programData ProgramSpeciesData[]
-  records     SpeciesRecord[]
+  id                 String             @id @default(uuid())
+  namaLokal          String             @map("nama_lokal")
+  namaIlmiah         String             @map("nama_ilmiah")
+  namaInggris        String?            @map("nama_inggris")
+  jenis              JenisSpesies
+
+  // Taksonomi Biologi Ilmiah
+  kingdom            String?            @default("Animalia/Plantae")
+  filum              String?
+  kelas              String?
+  ordo               String?
+  famili             String?
+  genus              String?
+
+  // Status Konservasi & Regulasi Resmi
+  statusIucn         StatusIucn         @default(LC) @map("status_iucn")
+  statusPerlindungan StatusPerlindungan @default(TIDAK_DILINDUNGI) @map("status_perlindungan")
+  statusCites        StatusCites        @default(NON_APPENDIX) @map("status_cites")
+  statusKeberadaan   StatusKeberadaan   @default(NATIVE) @map("status_keberadaan")
+
+  // Informasi Ekologi & Media
+  deskripsi          String?            @db.Text
+  habitat            String?
+  fotoUrl            String?            @map("foto_url")
+
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @default(now()) @updatedAt @map("updated_at")
+
+  programData        ProgramSpeciesData[]
+  records            SpeciesRecord[]
 
   @@map("species")
 }
@@ -83,20 +107,21 @@ model BiodiversityIndex {
 }
 
 model Program {
-  id          String               @id @default(uuid())
-  nama        String
-  deskripsi   String
-  anggaran    Float
-  status      ProgramStatus        @default(draft)
-  createdBy   String               @map("created_by")
-  createdAt   DateTime             @default(now()) @map("created_at")
-  updatedAt   DateTime             @updatedAt @map("updated_at")
+  id             String                  @id @default(uuid())
+  nama           String
+  deskripsi      String
+  anggaran       Float
+  status         ProgramStatus           @default(draft)
+  createdBy      String                  @map("created_by")
+  createdAt      DateTime                @default(now()) @map("created_at")
+  updatedAt      DateTime                @updatedAt @map("updated_at")
   photos         ProgramPhoto[]
   speciesData    ProgramSpeciesData[]
   supportingData ProgramSupportingData[]
-  creator        User                 @relation(fields: [createdBy], references: [id])
-    @@map("programs")
-  }
+  creator        User                    @relation(fields: [createdBy], references: [id])
+
+  @@map("programs")
+}
 
 model ProgramSpeciesData {
   id             String           @id @default(uuid())
@@ -112,7 +137,7 @@ model ProgramSpeciesData {
   @@map("program_species_data")
 }
 
-  model ProgramSupportingData {
+model ProgramSupportingData {
   id          String  @id @default(uuid())
   programId   String  @map("program_id")
   namaDaerah  String  @map("nama_daerah")
@@ -122,7 +147,7 @@ model ProgramSpeciesData {
   jumlah2025  Int     @default(0) @map("jumlah_2025")
   jumlah2026  Int     @default(0) @map("jumlah_2026")
 
-  program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+  program     Program @relation(fields: [programId], references: [id], onDelete: Cascade)
 
   @@map("program_supporting_data")
 }
@@ -180,6 +205,35 @@ enum Role {
 enum JenisSpesies {
   flora
   fauna
+}
+
+enum StatusIucn {
+  CR // Critically Endangered (Kritis)
+  EN // Endangered (Genting)
+  VU // Vulnerable (Rentan)
+  NT // Near Threatened (Hampir Terancam)
+  LC // Least Concern (Risiko Rendah)
+  DD // Data Deficient (Kurang Data)
+  NE // Not Evaluated (Belum Dievaluasi)
+}
+
+enum StatusPerlindungan {
+  DILINDUNGI        // Sesuai Permen LHK P.106/2018
+  TIDAK_DILINDUNGI
+}
+
+enum StatusCites {
+  APPENDIX_I
+  APPENDIX_II
+  APPENDIX_III
+  NON_APPENDIX
+}
+
+enum StatusKeberadaan {
+  NATIVE     // Asli
+  ENDEMIC    // Endemik Indonesia/Lokal
+  INTRODUCED // Introduksi
+  INVASIVE   // Invasif
 }
 
 enum RecordStatus {

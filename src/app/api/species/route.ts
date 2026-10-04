@@ -2,74 +2,68 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
-// Master data spesies -- dibaca oleh publik (untuk label grafik)
-// maupun internal (form input).
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const jenis = searchParams.get('jenis');
+    const dilindungi = searchParams.get('dilindungi');
+    const search = searchParams.get('search');
 
-export async function GET() {
-  const data = await prisma.species.findMany({
-    orderBy: [
-      { namaLokal: 'asc' },
-      { namaIlmiah: 'asc' },
-      { jenis: 'asc' },
-    ],
-  });
+    const where: Prisma.SpeciesWhereInput = {};
 
-  // Hilangkan duplikat berdasarkan:
-  // nama lokal + nama ilmiah + jenis
-  const uniqueData = data.filter((item, index, array) => {
-    const key = [
-      item.namaLokal.trim().toLowerCase(),
-      item.namaIlmiah.trim().toLowerCase(),
-      item.jenis,
-    ].join('|');
+    if (jenis === 'flora' || jenis === 'fauna') {
+      where.jenis = jenis;
+    }
 
-    return (
-      index ===
-      array.findIndex((other) => {
-        const otherKey = [
-          other.namaLokal.trim().toLowerCase(),
-          other.namaIlmiah.trim().toLowerCase(),
-          other.jenis,
-        ].join('|');
+    if (dilindungi === 'true') {
+      where.statusPerlindungan = 'DILINDUNGI';
+    }
 
-        return otherKey === key;
-      })
+    if (search) {
+      where.OR = [
+        { namaLokal: { contains: search, mode: 'insensitive' } },
+        { namaIlmiah: { contains: search, mode: 'insensitive' } },
+        { famili: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const data = await prisma.species.findMany({
+      where,
+      orderBy: [
+        { jenis: 'asc' },
+        { namaLokal: 'asc' },
+      ],
+    });
+
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    console.error('Error fetching species:', error);
+    return NextResponse.json(
+      { success: false, message: 'Gagal memuat data spesies.' },
+      { status: 500 }
     );
-  });
-
-  return NextResponse.json({
-    success: true,
-    data: uniqueData,
-  });
+  }
 }
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
-
   const role = (session?.user as { role?: string } | undefined)?.role;
 
   if (role !== 'admin' && role !== 'super_admin') {
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Tidak diizinkan.',
-      },
-      { status: 403 }
-    );
+    return NextResponse.json({ success: false, message: 'Akses ditolak.' }, { status: 403 });
   }
 
-  const body = await req.json();
-
-  const species = await prisma.species.create({
-    data: body,
-  });
-
-  return NextResponse.json(
-    {
-      success: true,
-      data: species,
-    },
-    { status: 201 }
-  );
+  try {
+    const body = await req.json();
+    const created = await prisma.species.create({ data: body });
+    return NextResponse.json({ success: true, data: created }, { status: 201 });
+  } catch (error) {
+    console.error('Error creating species:', error);
+    return NextResponse.json(
+      { success: false, message: 'Gagal menambahkan spesies.' },
+      { status: 500 }
+    );
+  }
 }
