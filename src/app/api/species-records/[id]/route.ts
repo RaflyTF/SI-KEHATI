@@ -5,6 +5,8 @@ import { getSpeciesRecordById, updateSpeciesRecord, deleteSpeciesRecord } from '
 import { speciesRecordUpdateSchema } from '@/lib/validators/speciesRecord.validator';
 import { ZodError } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const role = (session?.user as { role?: string } | undefined)?.role;

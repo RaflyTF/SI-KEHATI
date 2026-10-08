@@ -74,17 +74,17 @@ export function SpeciesRecordDetailModal({
         <div className="space-y-5">
           <dl className="grid grid-cols-2 gap-y-2 text-sm">
             <dt className="text-gray-500 dark:text-gray-400">Spesies</dt>
-            <dd className="text-gray-800 dark:text-gray-200 text-right">
-              {record.species.namaLokal} <span className="italic text-xs">({record.species.namaIlmiah})</span>
+            <dd className="text-gray-800 dark:text-gray-200 text-right font-medium">
+              {record.species.namaLokal} <span className="italic text-xs font-normal">({record.species.namaIlmiah})</span>
             </dd>
             <dt className="text-gray-500 dark:text-gray-400">Jenis</dt>
-            <dd className="text-gray-800 dark:text-gray-200 text-right">
-              {record.species.jenis === 'flora' ? 'Flora' : 'Fauna'}
+            <dd className="text-gray-800 dark:text-gray-200 text-right capitalize">
+              {record.species.jenis}
             </dd>
             <dt className="text-gray-500 dark:text-gray-400">Periode</dt>
             <dd className="text-gray-800 dark:text-gray-200 text-right">{record.period.label ?? record.period.tahun}</dd>
             <dt className="text-gray-500 dark:text-gray-400">Jumlah Individu</dt>
-            <dd className="text-gray-800 dark:text-gray-200 text-right">{record.jumlahIndividu}</dd>
+            <dd className="text-gray-800 dark:text-gray-200 text-right font-semibold">{record.jumlahIndividu}</dd>
             <dt className="text-gray-500 dark:text-gray-400">Status</dt>
             <dd className="text-right">
               <Badge status={record.status} labels={RECORD_STATUS_LABELS} colors={RECORD_STATUS_COLORS} />
@@ -102,20 +102,20 @@ export function SpeciesRecordDetailModal({
             {record.index && (
               <>
                 <dt className="text-gray-500 dark:text-gray-400">Indeks H&apos;</dt>
-                <dd className="text-gray-800 dark:text-gray-200 text-right">{record.index.hValue.toFixed(4)}</dd>
+                <dd className="text-gray-800 dark:text-gray-200 text-right font-mono font-medium">{record.index.hValue.toFixed(4)}</dd>
               </>
             )}
           </dl>
 
           {record.status === 'rejected' && record.catatanRevisi && (
-            <div className="rounded-lg bg-red-50 dark:bg-red-950/30 p-3">
-              <p className="text-xs font-medium text-danger mb-1">Catatan Revisi</p>
+            <div className="rounded-lg border border-red-200 bg-red-50 dark:border-red-900/50 dark:bg-red-950/30 p-3">
+              <p className="text-xs font-semibold text-red-600 dark:text-red-400 mb-1">Catatan Revisi Verifikator</p>
               <p className="text-sm text-gray-700 dark:text-gray-300">{record.catatanRevisi}</p>
             </div>
           )}
 
           <div>
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Riwayat Perubahan</p>
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Riwayat Jejak Audit</p>
             {history.length === 0 ? (
               <p className="text-sm text-gray-400">Belum ada riwayat tercatat.</p>
             ) : (

@@ -1,22 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { verifySpeciesRecord } from '@/services/speciesRecord.service';
+import { verifyRecord } from '@/services/speciesRecord.service';
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  const userId = (session?.user as { id?: string } | undefined)?.id;
+export const dynamic = 'force-dynamic';
 
-  if (!userId || (role !== 'admin' && role !== 'super_admin')) {
-    return NextResponse.json({ success: false, message: 'Hanya Admin yang dapat memverifikasi data.' }, { status: 403 });
-  }
-
+export async function POST(
+  _req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const result = await verifySpeciesRecord(params.id, userId);
-    return NextResponse.json({ success: true, data: result });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Gagal memverifikasi data.';
-    return NextResponse.json({ success: false, message }, { status: 400 });
+    const session = await getServerSession(authOptions);
+    const user = session?.user as { id?: string; role?: string } | undefined;
+
+    if (!user?.id || (user.role !== 'admin' && user.role !== 'super_admin')) {
+      return NextResponse.json(
+        { success: false, message: 'Akses ditolak. Hanya Verifikator/Admin yang diizinkan.' },
+        { status: 403 }
+      );
+    }
+
+    const verified = await verifyRecord(params.id, user.id);
+    return NextResponse.json({
+      success: true,
+      data: verified,
+      message: 'Data rekaman berhasil diverifikasi dan dipublikasikan.',
+    });
+  } catch (error: unknown) {
+    console.error('Verify record error:', error);
+    const message = error instanceof Error ? error.message : 'Gagal memverifikasi data.';
+    return NextResponse.json(
+      { success: false, message },
+      { status: 500 }
+    );
   }
 }

@@ -1,117 +1,96 @@
-// import { NextRequest, NextResponse } from 'next/server';
-// import { getServerSession } from 'next-auth';
-// import { authOptions } from '@/lib/auth';
-// import { getPublishedSpeciesRecords, getPendingSpeciesRecords, submitSpeciesRecord } from '@/services/speciesRecord.service';
-// import { ZodError } from 'zod';
-
-// export async function GET(req: NextRequest) {
-//   const status = req.nextUrl.searchParams.get('status');
-//   const session = await getServerSession(authOptions);
-//   const role = (session?.user as { role?: string } | undefined)?.role;
-
-//   // Data "pending" hanya boleh diambil oleh Admin/Super Admin yang sudah login.
-//   // Selain itu (termasuk tanpa parameter status sama sekali), yang dikembalikan
-//   // SELALU data published -- tidak bergantung pada input query dari client.
-//   if (status === 'pending') {
-//     if (!role || (role !== 'admin' && role !== 'super_admin')) {
-//       return NextResponse.json({ success: false, message: 'Tidak diizinkan.' }, { status: 403 });
-//     }
-//     const data = await getPendingSpeciesRecords();
-//     return NextResponse.json({ success: true, data });
-//   }
-
-//   const data = await getPublishedSpeciesRecords();
-//   return NextResponse.json({ success: true, data });
-// }
-
-// export async function POST(req: NextRequest) {
-//   const session = await getServerSession(authOptions);
-//   const role = (session?.user as { role?: string; id?: string } | undefined)?.role;
-//   const userId = (session?.user as { id?: string } | undefined)?.id;
-
-//   if (!session || !userId || (role !== 'petugas_lapangan' && role !== 'admin' && role !== 'super_admin')) {
-//     return NextResponse.json({ success: false, message: 'Tidak diizinkan.' }, { status: 403 });
-//   }
-
-//   try {
-//     const body = await req.json();
-//     const record = await submitSpeciesRecord(body, userId);
-//     return NextResponse.json({ success: true, data: record }, { status: 201 });
-//   } catch (err) {
-//     if (err instanceof ZodError) {
-//       return NextResponse.json({ success: false, message: err.errors[0]?.message }, { status: 400 });
-//     }
-//     return NextResponse.json({ success: false, message: 'Gagal menyimpan data.' }, { status: 500 });
-//   }
-// }
-
-
-// Kode Baru
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import {
-  getPublishedSpeciesRecords,
-  getPendingSpeciesRecords,
-  getMySpeciesRecords,
-  submitSpeciesRecord,
-} from '@/services/speciesRecord.service';
-import { ZodError } from 'zod';
+import { getSpeciesRecords, createSpeciesRecord } from '@/services/speciesRecord.service';
+import { RecordStatus } from '@prisma/client';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
-  const status = req.nextUrl.searchParams.get('status');
-  const scope = req.nextUrl.searchParams.get('scope');
-  const session = await getServerSession(authOptions);
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  const userId = (session?.user as { id?: string } | undefined)?.id;
+  try {
+    const session = await getServerSession(authOptions);
+    const user = session?.user as { id?: string; role?: string } | undefined;
 
-  // "scope=mine" -- riwayat submission MILIK PENGGUNA YANG SEDANG LOGIN,
-  // lintas semua status. Dipakai halaman Data Monitoring. Tersedia untuk
-  // SEMUA role yang login (bukan cuma Admin), karena ini data milik sendiri.
-  if (scope === 'mine') {
-    if (!userId) {
-      return NextResponse.json({ success: false, message: 'Tidak diizinkan.' }, { status: 403 });
-    }
-    const validStatus = ['draft', 'pending', 'published', 'rejected'].includes(status ?? '')
-      ? (status as 'draft' | 'pending' | 'published' | 'rejected')
-      : undefined;
-    const data = await getMySpeciesRecords(userId, validStatus);
+    const { searchParams } = new URL(req.url);
+    const periodId = searchParams.get('periodId') || undefined;
+    const speciesId = searchParams.get('speciesId') || undefined;
+    const statusParam = (searchParams.get('status') as RecordStatus) || undefined;
+    const scope = searchParams.get('scope') || undefined;
+
+    // Untuk publik tanpa login, paksa hanya menampilkan data yang sudah dipublikasikan
+    const status = !user ? RecordStatus.published : statusParam;
+
+    const data = await getSpeciesRecords({
+      periodId,
+      speciesId,
+      status,
+      userId: user?.id,
+      role: user?.role,
+      scope,
+    });
+
     return NextResponse.json({ success: true, data });
+  } catch (error) {
+    console.error('Get species records error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Gagal memuat rekaman spesies.' },
+      { status: 500 }
+    );
   }
-
-  // "status=pending" TANPA scope=mine -- khusus halaman Verifikasi, menampilkan
-  // SELURUH data pending lintas pengguna. Tetap dibatasi Admin/Super Admin saja.
-  if (status === 'pending') {
-    if (!role || (role !== 'admin' && role !== 'super_admin')) {
-      return NextResponse.json({ success: false, message: 'Tidak diizinkan.' }, { status: 403 });
-    }
-    const data = await getPendingSpeciesRecords();
-    return NextResponse.json({ success: true, data });
-  }
-
-  // Default (tanpa parameter apa pun) -- SELALU data published, untuk publik.
-  const data = await getPublishedSpeciesRecords();
-  return NextResponse.json({ success: true, data });
 }
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  const role = (session?.user as { role?: string; id?: string } | undefined)?.role;
-  const userId = (session?.user as { id?: string } | undefined)?.id;
-
-  if (!session || !userId || (role !== 'petugas_lapangan' && role !== 'admin' && role !== 'super_admin')) {
-    return NextResponse.json({ success: false, message: 'Tidak diizinkan.' }, { status: 403 });
-  }
-
   try {
-    const body = await req.json();
-    const record = await submitSpeciesRecord(body, userId);
-    return NextResponse.json({ success: true, data: record }, { status: 201 });
-  } catch (err) {
-    if (err instanceof ZodError) {
-      return NextResponse.json({ success: false, message: err.errors[0]?.message }, { status: 400 });
+    const session = await getServerSession(authOptions);
+    const user = session?.user as { id?: string; role?: string } | undefined;
+
+    if (!user?.id) {
+      return NextResponse.json(
+        { success: false, message: 'Harap masuk ke akun terlebih dahulu.' },
+        { status: 401 }
+      );
     }
-    return NextResponse.json({ success: false, message: 'Gagal menyimpan data.' }, { status: 500 });
+
+    const body = await req.json();
+
+    if (!body.speciesId || !body.periodId || body.jumlahIndividu === undefined) {
+      return NextResponse.json(
+        { success: false, message: 'Spesies, periode, dan jumlah individu wajib diisi.' },
+        { status: 400 }
+      );
+    }
+
+    const jumlahIndividu = Number(body.jumlahIndividu);
+    if (isNaN(jumlahIndividu) || jumlahIndividu < 0) {
+      return NextResponse.json(
+        { success: false, message: 'Jumlah individu harus berupa angka non-negatif.' },
+        { status: 400 }
+      );
+    }
+
+    // RBAC: Petugas lapangan hanya boleh menyimpan draft atau mengajukan (pending)
+    let requestedStatus: RecordStatus = body.status ?? RecordStatus.draft;
+    if (user.role === 'petugas_lapangan' && requestedStatus === RecordStatus.published) {
+      requestedStatus = RecordStatus.pending;
+    }
+
+    const created = await createSpeciesRecord(
+      {
+        speciesId: String(body.speciesId),
+        periodId: String(body.periodId),
+        jumlahIndividu,
+        status: requestedStatus,
+      },
+      user.id
+    );
+
+    return NextResponse.json({ success: true, data: created }, { status: 201 });
+  } catch (error: unknown) {
+    console.error('Create species record error:', error);
+    const message = error instanceof Error ? error.message : 'Gagal mencatat data temuan.';
+    return NextResponse.json(
+      { success: false, message },
+      { status: 500 }
+    );
   }
 }

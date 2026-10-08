@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/auth';
 import { getSpeciesRecordById } from '@/services/speciesRecord.service';
 import { getAuditHistoryForRecord } from '@/services/audit.service';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const role = (session?.user as { role?: string } | undefined)?.role;
