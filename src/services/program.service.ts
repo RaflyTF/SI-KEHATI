@@ -336,8 +336,8 @@ export async function getProgramBiodiversityData(
 
   for (const period of periods) {
 
-    const totalN = rows.reduce(
-      (sum, row) =>
+const totalN = rows.reduce(
+      (sum: number, row) =>
         sum +
         getJumlahIndividu(
           row,

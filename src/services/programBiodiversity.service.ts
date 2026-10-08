@@ -124,7 +124,7 @@ export async function getProgramBiodiversityData(
 
   for (const period of periods) {
     const totalN = rows.reduce(
-      (sum, row) => sum + getJumlahIndividu(row, period.tahun),
+      (sum: number, row) => sum + getJumlahIndividu(row, period.tahun),
       0
     );
 

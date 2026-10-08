@@ -138,16 +138,15 @@ model ProgramSpeciesData {
 }
 
 model ProgramSupportingData {
-  id          String  @id @default(uuid())
-  programId   String  @map("program_id")
-  namaDaerah  String  @map("nama_daerah")
-  jumlah2022  Int     @default(0) @map("jumlah_2022")
-  jumlah2023  Int     @default(0) @map("jumlah_2023")
-  jumlah2024  Int     @default(0) @map("jumlah_2024")
-  jumlah2025  Int     @default(0) @map("jumlah_2025")
-  jumlah2026  Int     @default(0) @map("jumlah_2026")
-
-  program     Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  programId   String   @map("program_id")
+  namaDaerah  String   @map("nama_daerah")
+  jumlah2022  Int      @default(0) @map("jumlah_2022")
+  jumlah2023  Int      @default(0) @map("jumlah_2023")
+  jumlah2024  Int      @default(0) @map("jumlah_2024")
+  jumlah2025  Int      @default(0) @map("jumlah_2025")
+  jumlah2026  Int      @default(0) @map("jumlah_2026")
+  program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
 
   @@map("program_supporting_data")
 }
